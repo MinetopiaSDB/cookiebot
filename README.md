@@ -8,7 +8,7 @@ Om de economie levend te houden kunnen mensen met een donator-rol iedere 4 uur k
 Een functie voor alle serverleden is het !steelcookie commando waarmee ieder serverlid kan proberen koekjes van andere serverleden te stelen. Deze serverleden kunnen ook het !eetcookie commando gebruiken waarmee ze een keer per uur een koekje kunnen opeten in de hoop dat ze hier een prijs voor terug krijgen.
 
 ## Help, hoe host ik de bot zelf?
-Je moet de bot compilen op Java 13 om een bruikbare executable te krijgen. Als je deze executable een keer uitvoerd krijg je de volgende config:
+Download de laatste versie van de bot [hier](https://github.com/MinetopiaSDB/cookiebot/releases), of clone de repository en compile 'm zelf. Als je het jar bestand een keer uitvoerd krijg je de volgende config:
 ``` 
 Bot:
   Token: TYP-HIER-JOUW-BOTTOKEN
