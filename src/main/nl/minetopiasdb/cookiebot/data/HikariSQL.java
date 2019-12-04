@@ -1,12 +1,12 @@
 package nl.minetopiasdb.cookiebot.data;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.zaxxer.hikari.HikariDataSource;
 
 import nl.minetopiasdb.cookiebot.utils.BotConfig;
-
 
 public class HikariSQL {
 
@@ -44,5 +44,14 @@ public class HikariSQL {
 		hikari.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 		hikari.setPoolName("SDB CookieBot");
 		hikari.setConnectionTestQuery("SELECT 1");
+
+		try (Connection conn = getConnection()) {
+			PreparedStatement statement = conn.prepareStatement(
+					"CREATE TABLE IF NOT EXISTS `CookieData` (`userId` bigint(18) NOT NULL PRIMARY KEY, `cookies` int(11) NOT NULL)");
+			statement.executeUpdate();
+			statement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
