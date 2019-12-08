@@ -52,12 +52,13 @@ public class EatCookieTask extends TimerTask {
 				}
 
 				currentlyEating.remove(userId);
-				msg.editMessage(MessageHandler.getHandler()
-						.getEatCookieFinishEmbed(Main.getBot().getUserById(userId), priceMsg).build()).queue();
 
 				if (price != 0) {
 					CookieData.getInstance().addCookies(userId, price);
 				}
+				
+				msg.editMessage(MessageHandler.getHandler()
+						.getEatCookieFinishEmbed(Main.getBot().getUserById(userId), priceMsg).build()).queue();
 			}
 		}
 	}
