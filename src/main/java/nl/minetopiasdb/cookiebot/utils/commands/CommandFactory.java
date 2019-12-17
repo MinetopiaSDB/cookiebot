@@ -3,6 +3,7 @@ package nl.minetopiasdb.cookiebot.utils.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import net.dv8tion.jda.api.entities.Message;
 
@@ -19,39 +20,21 @@ public class CommandFactory {
 	}
 
 	public Command registerCommand(String commandName, BotCommand executor) {
-		commands.keySet().forEach(cmd -> {
-			if (cmd.getName().equalsIgnoreCase(commandName)) {
-				return;
-			}
-		});
+		if (!commands.keySet().stream().filter(cmd -> cmd.getName().equalsIgnoreCase(commandName))
+				.collect(Collectors.toList()).isEmpty()) {
+			return null;
+		}
 		Command command = new Command(commandName, new ArrayList<>());
 		commands.put(command, executor);
 		return command;
 	}
 
-	public void registerAlias(String alias, String command) {
-		commands.keySet().forEach(cmd -> {
-			if (cmd.getName().equalsIgnoreCase(command)) {
-				cmd.addAlias(alias.toLowerCase());
-			}
-		});
-	}
+	public void execute(String fullProvided, Message msg) {
+		String[] args = Arrays.copyOfRange(fullProvided.split(" "), 1, fullProvided.split(" ").length);
+		String label = fullProvided.split(" ")[0].toLowerCase();
 
-	public Command execute(String fullProvided, Message msg) {
-		String[] args = fullProvided.split(" ");
-		if (args.length == 0) {
-			return null;
-		}
-		ArrayList<String> tempArgs = new ArrayList<>(Arrays.asList(args));
-		tempArgs.remove(0);
-		args = tempArgs.toArray(new String[0]);
-		for (Command cmd : commands.keySet()) {
-			String label = fullProvided.split(" ")[0].toLowerCase();
-			if (cmd.getName().equalsIgnoreCase(label) || cmd.getAliases().contains(label)) {
-				commands.get(cmd).execute(cmd, args, msg);
-				return cmd;
-			}
-		}
-		return null;
+		commands.keySet().stream()
+				.filter(cmd -> cmd.getName().equalsIgnoreCase(label) || cmd.getAliases().contains(label))
+				.forEach(cmd -> commands.get(cmd).execute(cmd, args, msg));
 	}
 }

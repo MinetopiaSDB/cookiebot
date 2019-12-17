@@ -73,7 +73,6 @@ public class Main {
 		CommandFactory.getInstance().registerCommand("!eetcookie", new EatcookieCMD());
 		CommandFactory.getInstance().registerCommand("!paycookie", new PaycookieCMD());
 		CommandFactory.getInstance().registerCommand("!steelcookie", new StealcookieCMD());
-		
 		CommandFactory.getInstance().registerCommand("!cookietop", new CookietopCMD());
 	}
 
