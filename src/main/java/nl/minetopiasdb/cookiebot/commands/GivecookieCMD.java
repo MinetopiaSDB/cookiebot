@@ -39,9 +39,15 @@ public class GivecookieCMD implements BotCommand {
 					.setDescription("Fout, gebruik: **!givecookie <@User>!**").build()).queue();
 			return;
 		}
+		Member receiver = msg.getMentionedMembers().get(0);
+		if (receiver.getIdLong() == msg.getAuthor().getIdLong()) {
+			msg.getChannel().sendMessage(MessageHandler.getHandler().getDefaultEmbed("Error")
+					.setDescription("Je kunt geen koekjes aan jezelf geven!").build()).queue();
+			return;
+		}
 
 		GivecookieCooldown.getInstance().addUserToCooldown(user.getIdLong());
-		Member receiver = msg.getMentionedMembers().get(0);
+		
 		CookieData.getInstance().addCookies(receiver.getIdLong(), 5);
 
 		msg.getChannel().sendMessage(
