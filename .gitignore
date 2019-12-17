@@ -12,6 +12,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+dependency-reduced-pom.xml
 
 # External tool builders
 .externalToolBuilders/
