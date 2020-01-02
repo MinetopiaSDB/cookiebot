@@ -1,6 +1,7 @@
 package nl.minetopiasdb.cookiebot.utils;
 
 import java.awt.Color;
+import java.util.Calendar;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -20,7 +21,7 @@ public class MessageHandler {
 		return new EmbedBuilder()
 				.setAuthor("CookieBot - " + header, "https://minetopiasdb.nl",
 						Main.getBot().getSelfUser().getAvatarUrl())
-				.setFooter("MinetopiaSDB - Copyright 2019.", Main.getBot().getSelfUser().getAvatarUrl())
+				.setFooter("MinetopiaSDB - Copyright " + Calendar.getInstance().get(Calendar.YEAR) + ".", Main.getBot().getSelfUser().getAvatarUrl())
 				.setColor(Color.CYAN);
 	}
 
