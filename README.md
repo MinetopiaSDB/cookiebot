@@ -12,8 +12,8 @@ Sinds versie 2.2 bevat de bot ook ondersteuning voor aandelen, deze aandelen wor
 ## Hoe werken de aandelen?
 Je kunt aandelen aanzetten door bij het kopje ``Aandelen`` enabled op ``true`` te zetten, als je dit gedaan hebt moet je jouw Finnhub API key in de config neerzetten. Deze API key kan je [hier](https://finnhub.io/) gratis aanvragen. 
 De aandelen worden automatisch iedere 3 minuten geüpdatet en afgerond op gehele koekjes, op deze manier kun je met jouw koekjes direct aandelen kopen en deze later weer verkopen, met de bedoeling om hier winst op te maken. 
-Je kunt zelf aandelen toevoegen door bij het kopje Stock: een nieuwe regel toe te voegen met de ticker symbol van het aandeel en de volledige naam.
 
+Je kunt zelf aandelen toevoegen door bij het kopje Stock: een nieuwe regel toe te voegen met de ticker symbol van het aandeel en de volledige naam.
 
 ## Help, hoe host ik de bot zelf?
 Download de laatste versie van de bot [hier](https://github.com/MinetopiaSDB/cookiebot/releases), of clone de repository en compile 'm zelf. Als je het jar bestand een keer uitvoert krijg je de volgende config:
