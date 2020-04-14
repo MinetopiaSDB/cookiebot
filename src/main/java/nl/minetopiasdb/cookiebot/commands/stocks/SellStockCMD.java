@@ -18,15 +18,15 @@ public class SellStockCMD implements BotCommand {
 					.queue();
 			return;
 		}
-		if (!BotConfig.getInstance().stocks.keySet().stream().filter(symbol -> args[0].equalsIgnoreCase(symbol))
-				.findFirst().isPresent()) {
+		BotConfig bc = BotConfig.getInstance();
+		if (!bc.stocks.keySet().stream().filter(symbol -> args[0].equalsIgnoreCase(symbol)).findFirst().isPresent()) {
 			msg.getChannel()
 					.sendMessage(msg.getAuthor().getAsMention() + ", gebruik !verkoopaandeel <Afkorting> <Hoeveelheid>")
 					.queue();
 			return;
 		}
-		String symbol = BotConfig.getInstance().stocks.keySet().stream()
-				.filter(stockSymbol -> args[0].equalsIgnoreCase(stockSymbol)).findFirst().get();
+		String symbol = bc.stocks.keySet().stream().filter(stockSymbol -> args[0].equalsIgnoreCase(stockSymbol))
+				.findFirst().get();
 		int amount = -1;
 		try {
 			amount = Integer.parseInt(args[1]);
@@ -42,9 +42,10 @@ public class SellStockCMD implements BotCommand {
 					.queue();
 			return;
 		}
+
 		if (StockUserData.getInstance().getStocks(msg.getAuthor().getIdLong(), symbol) < amount) {
 			msg.getChannel().sendMessage(msg.getAuthor().getAsMention() + ", jij hebt niet zoveel aandelen in **"
-					+ BotConfig.getInstance().stocks.get(symbol) + "**!").queue();
+					+ bc.stocks.get(symbol) + "**!").queue();
 			return;
 		}
 		int costs = amount * StockData.getInstance().getValue(symbol).getCurrentPrice();
@@ -52,10 +53,8 @@ public class SellStockCMD implements BotCommand {
 
 		StockUserData.getInstance().setStocks(msg.getAuthor().getIdLong(), symbol,
 				StockUserData.getInstance().getStocks(msg.getAuthor().getIdLong(), symbol) - amount);
-		msg.getChannel()
-				.sendMessage(msg.getAuthor().getAsMention() + ", jij hebt succesvol **" + amount + "** aandelen in **"
-						+ BotConfig.getInstance().stocks.get(symbol) + "** verkocht voor **" + costs + " koekjes**.")
-				.queue();
+		msg.getChannel().sendMessage(msg.getAuthor().getAsMention() + ", jij hebt succesvol **" + amount
+				+ "** aandelen in **" + bc.stocks.get(symbol) + "** verkocht voor **" + costs + " koekjes**.").queue();
 	}
 
 }

@@ -22,8 +22,8 @@ public class StockCMD implements BotCommand {
 			String name = BotConfig.getInstance().stocks.get(symbol);
 
 			StockValue value = StockData.getInstance().getValue(symbol);
-			double valueChange = (((double) value.getCurrentPrice()) - ((double) value.getOpenPrice()))
-					/ ((double) value.getOpenPrice()) * 100;
+			double valueChange = (value.getCurrentPrice() - value.getOpenPrice()) / ((double) value.getOpenPrice())
+					* 100;
 			DecimalFormat df = new DecimalFormat("0.00");
 			String valueChangeStr = valueChange > 0 ? "+" + df.format(valueChange) : "" + df.format(valueChange);
 

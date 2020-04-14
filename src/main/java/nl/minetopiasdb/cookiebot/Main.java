@@ -75,8 +75,9 @@ public class Main {
 			}
 		}, 60 * 1000l, 60 * 1000l);
 
-		if (BotConfig.getInstance().STOCKS_ENABLED) {
-			if (BotConfig.getInstance().FINNHUB_KEY.equals("LEUKEAPIKEYZEG")) {
+		BotConfig bc = BotConfig.getInstance();
+		if (bc.STOCKS_ENABLED) {
+			if (bc.FINNHUB_KEY.equals("LEUKEAPIKEYZEG")) {
 				System.out.println("Please request a free Finnhub API key at finnhub.io before enabling stocks!");
 			} else {
 				timer.scheduleAtFixedRate(new StockTask(), 0l, 1000 * 60 * 3);

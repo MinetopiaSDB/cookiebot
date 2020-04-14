@@ -43,7 +43,7 @@ public class PurchaseStockCMD implements BotCommand {
 			return;
 		}
 		int costs = StockData.getInstance().getValue(symbol).getCurrentPrice() * amount;
-		if (CookieData.getInstance().getCookies(msg.getAuthor().getIdLong()) < amount) {
+		if (CookieData.getInstance().getCookies(msg.getAuthor().getIdLong()) < costs) {
 			msg.getChannel().sendMessage(msg.getAuthor().getAsMention() + ", jij hebt hier niet genoeg cookies voor!")
 					.queue();
 			return;
