@@ -56,7 +56,7 @@
 		<repository>
 			<id>jcenter</id>
 			<name>jcenter-bintray</name>
-			<url>http://jcenter.bintray.com</url>
+			<url>https://jcenter.bintray.com</url>
 		</repository>
 		<repository>
 			<id>jitpack.io</id>
@@ -67,8 +67,7 @@
 		<dependency>
 			<groupId>net.dv8tion</groupId>
 			<artifactId>JDA</artifactId>
-			<version>4.0.0_39</version>
-			<scope>compile</scope>
+			<version>4.1.1_101</version>
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
