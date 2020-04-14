@@ -1,8 +1,8 @@
 package nl.minetopiasdb.cookiebot.data;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -46,9 +46,12 @@ public class HikariSQL {
 		hikari.setConnectionTestQuery("SELECT 1");
 
 		try (Connection conn = getConnection()) {
-			PreparedStatement statement = conn.prepareStatement(
+			Statement statement = conn.createStatement();
+			statement.execute(
 					"CREATE TABLE IF NOT EXISTS `CookieData` (`userId` bigint(18) NOT NULL PRIMARY KEY, `cookies` int(11) NOT NULL)");
-			statement.executeUpdate();
+			statement.execute(
+					"CREATE TABLE IF NOT EXISTS `StockData` (`id` int NOT NULL AUTO_INCREMENT PRIMARY KEY, `userId` bigint(18), `stocksymbol` varchar(5), `amount` int NOT NULL)");
+			
 			statement.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

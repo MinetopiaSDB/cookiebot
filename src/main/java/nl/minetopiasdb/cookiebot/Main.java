@@ -14,13 +14,19 @@ import nl.minetopiasdb.cookiebot.commands.EatcookieCMD;
 import nl.minetopiasdb.cookiebot.commands.GivecookieCMD;
 import nl.minetopiasdb.cookiebot.commands.PaycookieCMD;
 import nl.minetopiasdb.cookiebot.commands.StealcookieCMD;
+import nl.minetopiasdb.cookiebot.commands.stocks.PortfolioCMD;
+import nl.minetopiasdb.cookiebot.commands.stocks.PurchaseStockCMD;
+import nl.minetopiasdb.cookiebot.commands.stocks.SellStockCMD;
+import nl.minetopiasdb.cookiebot.commands.stocks.StockCMD;
 import nl.minetopiasdb.cookiebot.cooldowns.EatcookieCooldown;
 import nl.minetopiasdb.cookiebot.cooldowns.GivecookieCooldown;
 import nl.minetopiasdb.cookiebot.cooldowns.StealcookieCooldown;
 import nl.minetopiasdb.cookiebot.data.HikariSQL;
+import nl.minetopiasdb.cookiebot.data.stocks.StockUserData;
 import nl.minetopiasdb.cookiebot.listeners.CommandListener;
 import nl.minetopiasdb.cookiebot.tasks.EatCookieTask;
 import nl.minetopiasdb.cookiebot.tasks.StealCookieTask;
+import nl.minetopiasdb.cookiebot.tasks.StockTask;
 import nl.minetopiasdb.cookiebot.utils.BotConfig;
 import nl.minetopiasdb.cookiebot.utils.commands.CommandFactory;
 
@@ -57,17 +63,30 @@ public class Main {
 
 		eatCookieTask = new EatCookieTask();
 		stealCookieTask = new StealCookieTask();
-		
-		new Timer().scheduleAtFixedRate(eatCookieTask, 1000l, 1000l);
-		new Timer().scheduleAtFixedRate(stealCookieTask, 1000l, 1000l);
-		new Timer().scheduleAtFixedRate(new TimerTask() {
+
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(eatCookieTask, 1000l, 1000l);
+		timer.scheduleAtFixedRate(stealCookieTask, 1000l, 1000l);
+		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
 				StealcookieCooldown.getInstance().manageCooldowns();
 				EatcookieCooldown.getInstance().manageCooldowns();
 				GivecookieCooldown.getInstance().manageCooldowns();
 			}
-		}, 60*1000l, 60*1000l);
+		}, 60 * 1000l, 60 * 1000l);
 
+		if (BotConfig.getInstance().STOCKS_ENABLED) {
+			if (BotConfig.getInstance().FINNHUB_KEY.equals("LEUKEAPIKEYZEG")) {
+				System.out.println("Please request a free Finnhub API key at finnhub.io before enabling stocks!");
+			} else {
+				timer.scheduleAtFixedRate(new StockTask(), 0l, 1000 * 60 * 3);
+				StockUserData.getInstance().pullFromDatabase();
+				CommandFactory.getInstance().registerCommand("!aandelen", new StockCMD());
+				CommandFactory.getInstance().registerCommand("!portfolio", new PortfolioCMD());
+				CommandFactory.getInstance().registerCommand("!koopaandeel", new PurchaseStockCMD());
+				CommandFactory.getInstance().registerCommand("!verkoopaandeel", new SellStockCMD());
+			}
+		}
 		CommandFactory.getInstance().registerCommand("!cookies", new CookiesCMD());
 		CommandFactory.getInstance().registerCommand("!givecookie", new GivecookieCMD());
 		CommandFactory.getInstance().registerCommand("!eetcookie", new EatcookieCMD());
@@ -91,7 +110,7 @@ public class Main {
 	public static EatCookieTask getEatCookieTask() {
 		return eatCookieTask;
 	}
-	
+
 	public static StealCookieTask getStealCookieTask() {
 		return stealCookieTask;
 	}

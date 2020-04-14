@@ -1,6 +1,7 @@
 package nl.minetopiasdb.cookiebot.utils;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.simpleyaml.configuration.file.YamlFile;
 import org.simpleyaml.exceptions.InvalidConfigurationException;
@@ -9,9 +10,11 @@ public class BotConfig {
 
 	private static BotConfig instance;
 
-	public String BOT_TOKEN, MYSQL_HOST, MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD;
+	public HashMap<String, String> stocks = new HashMap<>();
+	public String BOT_TOKEN, MYSQL_HOST, MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD, FINNHUB_KEY;
 	public int MYSQL_PORT;
 	public Long DONATOR_ROLE_ID, GUILD_ID, COOKIECHANNEL_ID;
+	public boolean STOCKS_ENABLED;
 
 	public static BotConfig getInstance() {
 		if (instance == null) {
@@ -37,6 +40,18 @@ public class BotConfig {
 			file.addDefault("MySQL.Database", "cookiebot");
 			file.addDefault("MySQL.Username", "cookiebot");
 			file.addDefault("MySQL.Password", "ikwilkoekjes");
+			
+			if (file.getConfigurationSection("Aandelen") == null) {
+				file.addDefault("Aandelen.Enabled", false);
+				file.addDefault("Aandelen.FinnhubAPIKey", "LEUKEAPIKEYZEG");
+				
+				file.addDefault("Aandelen.Stock.AAPL", "Apple Inc.");
+				file.addDefault("Aandelen.Stock.AMZN", "Amazon.com");
+				file.addDefault("Aandelen.Stock.AMD", "Advanced Micro Devices");
+				file.addDefault("Aandelen.Stock.TSLA", "Tesla, Inc.");
+				file.addDefault("Aandelen.Stock.MSFT", "Microsoft");
+				file.addDefault("Aandelen.Stock.NVDA", "NVIDIA");
+			}
 			file.options().copyDefaults(true);
 			file.save();
 
@@ -51,6 +66,12 @@ public class BotConfig {
 			GUILD_ID = file.getLong("Bot.GuildID");
 			DONATOR_ROLE_ID = file.getLong("Bot.DonatorRoleID");
 			COOKIECHANNEL_ID = file.getLong("Bot.CookieChannelId");
+			STOCKS_ENABLED = file.getBoolean("Aandelen.Enabled");
+			FINNHUB_KEY = file.getString("Aandelen.FinnhubAPIKey");
+			
+			for (String stock: file.getConfigurationSection("Aandelen.Stock").getKeys(false)) {
+				stocks.put(stock, file.getString("Aandelen.Stock." + stock));
+			}
 
 		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
