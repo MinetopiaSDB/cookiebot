@@ -21,9 +21,6 @@ public class StockUserData {
 		return instance;
 	}
 
-	// `id` int NOT NULL PRIMARY KEY, `userId` bigint(18), `stocksymbol` varchar(5),
-	// `amount` int NOT NULL
-
 	public void pullFromDatabase() {
 		cache.clear();
 		try (Connection conn = HikariSQL.getInstance().getConnection()) {
