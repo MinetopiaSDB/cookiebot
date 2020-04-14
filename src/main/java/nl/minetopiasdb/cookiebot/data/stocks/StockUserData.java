@@ -49,6 +49,14 @@ public class StockUserData {
 			cache.put(user + "." + symbol, amount);
 		}
 		try (Connection conn = HikariSQL.getInstance().getConnection()) {
+			if (amount == 0) {
+				PreparedStatement ps = conn.prepareStatement("DELETE FROM StockData WHERE userId=? AND stocksymbol=?");
+				ps.setLong(1, user);
+				ps.setString(2, symbol);
+				ps.execute();
+				ps.close();
+				return;
+			}
 			PreparedStatement ps = conn.prepareStatement("SELECT id FROM StockData WHERE userId=? AND stocksymbol=?");
 			ps.setLong(1, user);
 			ps.setString(2, symbol);
