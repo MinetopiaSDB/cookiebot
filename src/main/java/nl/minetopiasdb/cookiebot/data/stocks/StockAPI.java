@@ -16,6 +16,9 @@ public class StockAPI {
 		try {
 			JsonObject object = readJsonFromUrl(
 					new URL("https://finnhub.io/api/v1/quote?symbol=" + symbol + "&token=" + apiToken));
+			if (object == null) {
+				return null;
+			}
 			double currentPrice = object.get("c").getAsDouble();
 			double open = object.get("o").getAsDouble();
 
@@ -33,6 +36,9 @@ public class StockAPI {
 		conn.setRequestMethod("GET");
 		conn.connect();
 
+		if (conn.getResponseCode() == 401) {
+			return null;
+		}
 		InputStream is = (InputStream) conn.getContent();
 		InputStreamReader reader = new InputStreamReader(is);
 

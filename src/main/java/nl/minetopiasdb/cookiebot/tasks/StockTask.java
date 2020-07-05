@@ -13,6 +13,9 @@ public class StockTask extends TimerTask {
 	public void run() {
 		for (String symbol : BotConfig.getInstance().stocks.keySet()) {
 			StockValue value = StockAPI.getValue(symbol, BotConfig.getInstance().FINNHUB_KEY);
+			if (value == null) {
+				return;
+			}
 			int openPrice = value.getOpenPrice();
 			int currentPrice = value.getCurrentPrice();
 

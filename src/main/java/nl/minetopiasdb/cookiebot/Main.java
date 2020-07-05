@@ -1,5 +1,6 @@
 package nl.minetopiasdb.cookiebot;
 
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -8,6 +9,7 @@ import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import nl.minetopiasdb.cookiebot.commands.CookiesCMD;
 import nl.minetopiasdb.cookiebot.commands.CookietopCMD;
 import nl.minetopiasdb.cookiebot.commands.EatcookieCMD;
@@ -46,7 +48,7 @@ public class Main {
 		}
 
 		try {
-			jda = new JDABuilder(BotConfig.getInstance().BOT_TOKEN).build();
+			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, Arrays.asList(GatewayIntent.GUILD_MESSAGES)).build();
 		} catch (LoginException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +82,7 @@ public class Main {
 			if (bc.FINNHUB_KEY.equals("LEUKEAPIKEYZEG")) {
 				System.out.println("Please request a free Finnhub API key at finnhub.io before enabling stocks!");
 			} else {
-				timer.scheduleAtFixedRate(new StockTask(), 0l, 1000 * 60 * 3);
+				timer.scheduleAtFixedRate(new StockTask(), 0l, 1000 * 60 * 4);
 				StockUserData.getInstance().pullFromDatabase();
 				CommandFactory.getInstance().registerCommand("!aandelen", new StockCMD());
 				CommandFactory.getInstance().registerCommand("!portfolio", new PortfolioCMD());
