@@ -41,4 +41,4 @@ Aandelen:
     NVDA: NVIDIA
 ```
 Voordat je kunt beginnen moet je een aantal waardes aanpassen in de config. De waardes die je moet aanpassen zijn de bottoken, de MySQL inloggegevens en de bovenstaande IDs aanpassen. Je 
-kunt de waarde van de 'CookieChannelId' onaangepast laten, dan werkt de cookiebot in elk kanaal.
+kunt de waarde van de 'CookieChannelId' onaangepast laten, dan werkt de cookiebot in elk kanaal. Om de bot te gebruiken moet je ook de ``Server Members Intent`` aanzetten in jouw Discord Developer Portal.
