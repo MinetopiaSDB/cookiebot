@@ -30,8 +30,8 @@ public class CookietopCMD implements BotCommand {
 	}
 
 	public String getName(long userId) {
-		return Main.getGuild().getMemberById(userId) == null ? "Onbekend"
-				: Main.getGuild().getMemberById(userId).getEffectiveName();
+		return Main.getGuild().retrieveMemberById(userId).complete() == null ? "Onbekend"
+				: Main.getGuild().retrieveMemberById(userId).complete().getEffectiveName();
 	}
 
 }

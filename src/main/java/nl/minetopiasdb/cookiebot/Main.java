@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import nl.minetopiasdb.cookiebot.commands.CookiesCMD;
 import nl.minetopiasdb.cookiebot.commands.CookietopCMD;
 import nl.minetopiasdb.cookiebot.commands.EatcookieCMD;
@@ -48,7 +49,9 @@ public class Main {
 		}
 
 		try {
-			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, Arrays.asList(GatewayIntent.GUILD_MESSAGES)).build();
+			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, Arrays.asList(GatewayIntent.GUILD_MESSAGES))
+					.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
+					.build();
 		} catch (LoginException e) {
 			e.printStackTrace();
 		}
