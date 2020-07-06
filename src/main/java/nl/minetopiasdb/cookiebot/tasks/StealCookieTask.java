@@ -26,8 +26,8 @@ public class StealCookieTask extends TimerTask {
 				seconds--;
 
 				msg.editMessage(MessageHandler.getHandler()
-						.getStealCookieProgressEmbed(Main.getBot().retrieveUserById(userId).complete(),
-								Main.getBot().retrieveUserById(targetId).complete(), seconds)
+						.getStealCookieProgressEmbed(Main.getBot().retrieveUserById(userId, false).complete(),
+								Main.getBot().retrieveUserById(targetId, false).complete(), seconds)
 						.build()).queue();
 
 				currentlyEating.remove(userId);
@@ -57,8 +57,8 @@ public class StealCookieTask extends TimerTask {
 
 				currentlyEating.remove(userId);
 				msg.editMessage(MessageHandler.getHandler()
-						.getStealCookieFinishEmbed(Main.getBot().retrieveUserById(userId).complete(),
-								Main.getBot().retrieveUserById(targetId).complete(), priceStatus, priceMsg)
+						.getStealCookieFinishEmbed(Main.getBot().retrieveUserById(userId, false).complete(),
+								Main.getBot().retrieveUserById(targetId, false).complete(), priceStatus, priceMsg)
 						.build()).queue();
 			}
 		}

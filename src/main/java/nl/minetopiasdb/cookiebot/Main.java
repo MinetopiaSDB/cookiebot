@@ -1,6 +1,5 @@
 package nl.minetopiasdb.cookiebot;
 
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -49,7 +48,7 @@ public class Main {
 		}
 
 		try {
-			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, Arrays.asList(GatewayIntent.GUILD_MESSAGES))
+			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES)
 					.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
 					.build();
 		} catch (LoginException e) {

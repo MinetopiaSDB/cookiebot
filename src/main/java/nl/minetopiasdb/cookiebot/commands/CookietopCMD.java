@@ -32,7 +32,7 @@ public class CookietopCMD implements BotCommand {
 
 	public String getName(long userId) {
 		try {
-			return Main.getGuild().retrieveMemberById(userId).complete().getEffectiveName();
+			return Main.getGuild().retrieveMemberById(userId, false).complete().getEffectiveName();
 		} catch (ErrorResponseException ex) {
 			return "Onbekend";
 		}
