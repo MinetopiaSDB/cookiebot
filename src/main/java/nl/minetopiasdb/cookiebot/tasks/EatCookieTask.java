@@ -27,7 +27,7 @@ public class EatCookieTask extends TimerTask {
 				seconds--;
 
 				msg.editMessage(MessageHandler.getHandler()
-						.getEatCookieProgressEmbed(Main.getBot().getUserById(userId), seconds).build()).queue();
+						.getEatCookieProgressEmbed(Main.getBot().retrieveUserById(userId).complete(), seconds).build()).queue();
 
 				currentlyEating.remove(userId);
 				currentlyEating.put(userId, new AbstractMap.SimpleEntry<>(msg, seconds));
@@ -58,7 +58,7 @@ public class EatCookieTask extends TimerTask {
 				}
 				
 				msg.editMessage(MessageHandler.getHandler()
-						.getEatCookieFinishEmbed(Main.getBot().getUserById(userId), priceMsg).build()).queue();
+						.getEatCookieFinishEmbed(Main.getBot().retrieveUserById(userId).complete(), priceMsg).build()).queue();
 			}
 		}
 	}

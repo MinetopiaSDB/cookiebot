@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import nl.minetopiasdb.cookiebot.Main;
 import nl.minetopiasdb.cookiebot.data.CookieData;
 import nl.minetopiasdb.cookiebot.utils.MessageHandler;
@@ -30,8 +31,11 @@ public class CookietopCMD implements BotCommand {
 	}
 
 	public String getName(long userId) {
-		return Main.getGuild().retrieveMemberById(userId).complete() == null ? "Onbekend"
-				: Main.getGuild().retrieveMemberById(userId).complete().getEffectiveName();
+		try {
+			return Main.getGuild().retrieveMemberById(userId).complete().getEffectiveName();
+		} catch (ErrorResponseException ex) {
+			return "Onbekend";
+		}
 	}
 
 }
