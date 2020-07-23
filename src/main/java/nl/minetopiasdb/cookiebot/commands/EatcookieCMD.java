@@ -1,7 +1,6 @@
 package nl.minetopiasdb.cookiebot.commands;
 
 import java.util.AbstractMap;
-import java.util.function.Consumer;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -37,12 +36,11 @@ public class EatcookieCMD implements BotCommand {
 		CookieData.getInstance().removeCookies(user.getIdLong(), 1);
 
 		msg.getChannel().sendMessage(MessageHandler.getHandler()
-				.getEatCookieProgressEmbed(Main.getGuild().retrieveMemberById(user.getIdLong(), false).complete().getUser(), 5).build())
-				.queue(new Consumer<Message>() {
-					@Override
-					public void accept(Message t) {
-						Main.getEatCookieTask().getMap().put(user.getIdLong(), new AbstractMap.SimpleEntry<>(t, 5));
-					}
-				});
+				.getEatCookieProgressEmbed(
+						Main.getGuild().retrieveMemberById(user.getIdLong(), false).complete().getUser(), 5)
+				.build())
+				.queue(t -> Main.getEatCookieTask().getMap().put(user.getIdLong(),
+						new AbstractMap.SimpleEntry<>(t, 5)));
+
 	}
 }

@@ -1,7 +1,5 @@
 package nl.minetopiasdb.cookiebot.commands;
 
-import java.util.function.Consumer;
-
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -55,13 +53,8 @@ public class StealcookieCMD implements BotCommand {
 
 		msg.getChannel()
 				.sendMessage(MessageHandler.getHandler().getStealCookieProgressEmbed(user, target.getUser(), 5).build())
-				.queue(new Consumer<Message>() {
-					@Override
-					public void accept(Message t) {
-						Main.getStealCookieTask().getMap().put(user.getIdLong(),
-								new StealData(t, 5, target.getIdLong()));
-					}
-				});
+				.queue(t -> Main.getStealCookieTask().getMap().put(user.getIdLong(),
+						new StealData(t, 5, target.getIdLong())));
 
 	}
 }
