@@ -24,6 +24,7 @@ import nl.minetopiasdb.cookiebot.cooldowns.EatcookieCooldown;
 import nl.minetopiasdb.cookiebot.cooldowns.GivecookieCooldown;
 import nl.minetopiasdb.cookiebot.cooldowns.StealcookieCooldown;
 import nl.minetopiasdb.cookiebot.data.HikariSQL;
+import nl.minetopiasdb.cookiebot.data.stocks.FinnhubAPI;
 import nl.minetopiasdb.cookiebot.data.stocks.StockUserData;
 import nl.minetopiasdb.cookiebot.listeners.CommandListener;
 import nl.minetopiasdb.cookiebot.tasks.EatCookieTask;
@@ -34,10 +35,10 @@ import nl.minetopiasdb.cookiebot.utils.commands.CommandFactory;
 
 public class Main {
 
+	private static FinnhubAPI finnhubAPI;
 	private static JDA jda;
 	private static EatCookieTask eatCookieTask;
 	private static StealCookieTask stealCookieTask;
-	public static boolean TESTED = true;
 
 	public static void main(String[] args) {
 		BotConfig.getInstance().initialise();
@@ -69,22 +70,23 @@ public class Main {
 		stealCookieTask = new StealCookieTask();
 
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(eatCookieTask, 1000l, 1000l);
-		timer.scheduleAtFixedRate(stealCookieTask, 1000l, 1000l);
+		timer.scheduleAtFixedRate(eatCookieTask, 1000L, 1000L);
+		timer.scheduleAtFixedRate(stealCookieTask, 1000L, 1000L);
 		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
 				StealcookieCooldown.getInstance().manageCooldowns();
 				EatcookieCooldown.getInstance().manageCooldowns();
 				GivecookieCooldown.getInstance().manageCooldowns();
 			}
-		}, 60 * 1000l, 60 * 1000l);
+		}, 60 * 1000L, 60 * 1000L);
 
 		BotConfig bc = BotConfig.getInstance();
 		if (bc.STOCKS_ENABLED) {
 			if (bc.FINNHUB_KEY.equals("LEUKEAPIKEYZEG")) {
 				System.out.println("Please request a free Finnhub API key at finnhub.io before enabling stocks!");
 			} else {
-				timer.scheduleAtFixedRate(new StockTask(), 0l, 1000 * 60 * 4);
+				finnhubAPI = new FinnhubAPI(bc.FINNHUB_KEY);
+				timer.scheduleAtFixedRate(new StockTask(), 0L, 1000 * 60 * 4);
 				StockUserData.getInstance().pullFromDatabase();
 				CommandFactory.getInstance().registerCommand("!aandelen", new StockCMD());
 				CommandFactory.getInstance().registerCommand("!portfolio", new PortfolioCMD());
@@ -102,6 +104,10 @@ public class Main {
 
 	public static JDA getBot() {
 		return jda;
+	}
+
+	public static FinnhubAPI getFinnhubAPI() {
+		return finnhubAPI;
 	}
 
 	public static Guild getGuild() {

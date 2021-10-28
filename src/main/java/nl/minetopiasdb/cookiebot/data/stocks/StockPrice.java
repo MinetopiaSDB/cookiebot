@@ -1,10 +1,10 @@
 package nl.minetopiasdb.cookiebot.data.stocks;
 
-public class StockValue {
+public class StockPrice {
 
 	private int openPrice, currentPrice;
 
-	public StockValue(int openPrice, int currentPrice) {
+	public StockPrice(int openPrice, int currentPrice) {
 		this.openPrice = openPrice;
 		this.currentPrice = currentPrice;
 	}
