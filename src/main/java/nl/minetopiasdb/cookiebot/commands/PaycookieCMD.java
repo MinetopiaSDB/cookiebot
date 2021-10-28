@@ -8,9 +8,9 @@ import nl.minetopiasdb.cookiebot.utils.MessageHandler;
 import nl.minetopiasdb.cookiebot.utils.commands.BotCommand;
 import nl.minetopiasdb.cookiebot.utils.commands.Command;
 
-public class PaycookieCMD implements BotCommand {
+public class PaycookieCMD {/*implements BotCommand {
 
-	@Override
+	@Override*/
 	public void execute(Command cmd, String[] args, Message msg) {
 		if (msg.getMentionedMembers().size() != 1 || args.length < 2) {
 			msg.getChannel().sendMessage(MessageHandler.getHandler().getDefaultEmbed("Error")

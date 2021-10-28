@@ -8,29 +8,31 @@ import java.util.Random;
 import java.util.TimerTask;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.interactions.Interaction;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import nl.minetopiasdb.cookiebot.Main;
 import nl.minetopiasdb.cookiebot.data.CookieData;
 import nl.minetopiasdb.cookiebot.utils.MessageHandler;
 
 public class EatCookieTask extends TimerTask {
 
-	public HashMap<Long, Entry<Message, Integer>> currentlyEating = new HashMap<>();
+	public HashMap<Long, Entry<InteractionHook, Integer>> currentlyEating = new HashMap<>();
 
 	@Override
 	public void run() {
 		for (long userId : new ArrayList<>(currentlyEating.keySet())) {
-			Entry<Message, Integer> entry = currentlyEating.get(userId);
-			Message msg = entry.getKey();
+			Entry<InteractionHook, Integer> entry = currentlyEating.get(userId);
+			InteractionHook hook = entry.getKey();
 			int seconds = entry.getValue();
 
 			if (seconds > 1) {
 				seconds--;
 
-				msg.editMessage(MessageHandler.getHandler()
+				hook.editOriginal("").setEmbeds(MessageHandler.getHandler()
 						.getEatCookieProgressEmbed(Main.getBot().retrieveUserById(userId, false).complete(), seconds).build()).queue();
 
 				currentlyEating.remove(userId);
-				currentlyEating.put(userId, new AbstractMap.SimpleEntry<>(msg, seconds));
+				currentlyEating.put(userId, new AbstractMap.SimpleEntry<>(hook, seconds));
 			} else {
 				int price = -1;
 				String priceMsg = "";
@@ -57,13 +59,13 @@ public class EatCookieTask extends TimerTask {
 					CookieData.getInstance().addCookies(userId, price);
 				}
 				
-				msg.editMessage(MessageHandler.getHandler()
+				hook.editOriginal("").setEmbeds(MessageHandler.getHandler()
 						.getEatCookieFinishEmbed(Main.getBot().retrieveUserById(userId, false).complete(), priceMsg).build()).queue();
 			}
 		}
 	}
 
-	public HashMap<Long, Entry<Message, Integer>> getMap() {
+	public HashMap<Long, Entry<InteractionHook, Integer>> getMap() {
 		return currentlyEating;
 	}
 

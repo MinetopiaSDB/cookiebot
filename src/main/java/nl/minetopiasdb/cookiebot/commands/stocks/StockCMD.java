@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import nl.minetopiasdb.cookiebot.data.stocks.StockData;
 import nl.minetopiasdb.cookiebot.data.stocks.StockPrice;
 import nl.minetopiasdb.cookiebot.utils.BotConfig;
@@ -14,7 +15,7 @@ import nl.minetopiasdb.cookiebot.utils.commands.Command;
 public class StockCMD implements BotCommand {
 
 	@Override
-	public void execute(Command cmd, String[] args, Message msg) {
+	public void execute(Command cmd, SlashCommandEvent event) {
 		EmbedBuilder builder = MessageHandler.getHandler().getDefaultEmbed("Aandelen");
 
 		String desc = "";
@@ -31,7 +32,7 @@ public class StockCMD implements BotCommand {
 					+ valueChangeStr + "%)";
 		}
 		builder.setDescription(desc);
-		msg.getChannel().sendMessage(builder.build()).queue();
+		event.reply("").addEmbeds(builder.build()).queue();
 	}
 
 }

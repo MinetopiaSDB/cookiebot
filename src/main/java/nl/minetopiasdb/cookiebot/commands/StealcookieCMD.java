@@ -11,9 +11,9 @@ import nl.minetopiasdb.cookiebot.utils.MessageHandler;
 import nl.minetopiasdb.cookiebot.utils.commands.BotCommand;
 import nl.minetopiasdb.cookiebot.utils.commands.Command;
 
-public class StealcookieCMD implements BotCommand {
+public class StealcookieCMD{/*implements BotCommand {
 
-	@Override
+	@Override*/
 	public void execute(Command cmd, String[] args, Message msg) {
 		if (StealcookieCooldown.getInstance().hasCooldown(msg.getAuthor().getIdLong())) {
 			msg.getChannel().sendMessage(MessageHandler.getHandler().getDefaultEmbed("Error")

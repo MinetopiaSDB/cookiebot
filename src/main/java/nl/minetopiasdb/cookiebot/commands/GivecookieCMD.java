@@ -13,9 +13,9 @@ import nl.minetopiasdb.cookiebot.utils.MessageHandler;
 import nl.minetopiasdb.cookiebot.utils.commands.BotCommand;
 import nl.minetopiasdb.cookiebot.utils.commands.Command;
 
-public class GivecookieCMD implements BotCommand {
+public class GivecookieCMD{/*implements BotCommand {
 
-	@Override
+	@Override*/
 	public void execute(Command cmd, String[] args, Message msg) {
 		User user = msg.getAuthor();
 

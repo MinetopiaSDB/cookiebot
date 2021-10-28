@@ -1,13 +1,18 @@
 package nl.minetopiasdb.cookiebot;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.security.auth.login.LoginException;
+import javax.swing.text.html.Option;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import nl.minetopiasdb.cookiebot.commands.CookiesCMD;
@@ -31,6 +36,7 @@ import nl.minetopiasdb.cookiebot.tasks.EatCookieTask;
 import nl.minetopiasdb.cookiebot.tasks.StealCookieTask;
 import nl.minetopiasdb.cookiebot.tasks.StockTask;
 import nl.minetopiasdb.cookiebot.utils.BotConfig;
+import nl.minetopiasdb.cookiebot.utils.MessageHandler;
 import nl.minetopiasdb.cookiebot.utils.commands.CommandFactory;
 
 public class Main {
@@ -88,18 +94,70 @@ public class Main {
 				finnhubAPI = new FinnhubAPI(bc.FINNHUB_KEY);
 				timer.scheduleAtFixedRate(new StockTask(), 0L, 1000 * 60 * 4);
 				StockUserData.getInstance().pullFromDatabase();
-				CommandFactory.getInstance().registerCommand("!aandelen", new StockCMD());
-				CommandFactory.getInstance().registerCommand("!portfolio", new PortfolioCMD());
-				CommandFactory.getInstance().registerCommand("!koopaandeel", new PurchaseStockCMD());
-				CommandFactory.getInstance().registerCommand("!verkoopaandeel", new SellStockCMD());
+				CommandFactory.getInstance().registerCommand("aandelen",
+						"Bekijk alle beschikbare aandelen en hun waarde.",
+						new StockCMD());
+				CommandFactory.getInstance().registerCommand("portfolio",
+						"Bekijk welke aandelen jij nu hebt en hoeveel deze waard zijn", new PortfolioCMD());
+
+				// Create OptionData and add every stock
+				OptionData stockOption = new OptionData(OptionType.STRING, "aandeel",
+						"Het aandeel waarop jij deze actie wilt verrichten", true);
+				BotConfig.getInstance().stocks.forEach((key, value) -> stockOption.addChoice(value, key));
+
+				CommandFactory.getInstance().registerCommand("koopaandeel",
+						"Koop aandelen", new PurchaseStockCMD(), stockOption,
+						new OptionData(OptionType.INTEGER, "hoeveelheid",
+								"De hoeveelheid aandelen die je wilt kopen"));
+
+				CommandFactory.getInstance().registerCommand("verkoopaandeel",
+						"Verkoop aandelen", new SellStockCMD(), stockOption,
+						new OptionData(OptionType.INTEGER, "hoeveelheid",
+								"De hoeveelheid aandelen die je wilt verkopen"));
 			}
 		}
-		CommandFactory.getInstance().registerCommand("!cookies", new CookiesCMD());
+		CommandFactory.getInstance().registerCommand("cookies",
+				"Bekijk de hoeveelheid koekjes van jezelf en andere serverleden", new CookiesCMD(),
+				new OptionData(OptionType.USER, "user", "Persoon van wie jij de hoeveelheid koekjes wilt zien"));
+
+		//givecookie
+
+		CommandFactory.getInstance().registerCommand("eetcookie",
+				"Eet een koekje op en maak kans op prijzen!", new EatcookieCMD());
+
+		/*
 		CommandFactory.getInstance().registerCommand("!givecookie", new GivecookieCMD());
-		CommandFactory.getInstance().registerCommand("!eetcookie", new EatcookieCMD());
 		CommandFactory.getInstance().registerCommand("!paycookie", new PaycookieCMD());
 		CommandFactory.getInstance().registerCommand("!steelcookie", new StealcookieCMD());
-		CommandFactory.getInstance().registerCommand("!cookietop", new CookietopCMD());
+	   */
+
+		CommandFactory.getInstance().registerCommand("cookietop",
+				"Kom erachter wie de meeste cookies heeft!",
+				new CookietopCMD());
+
+		// Give hints to users that still use the old commands
+		Set<String> OLD_COMMANDS = Set.of("!aandelen", "!portfolio", "!koopaandeel", "!verkoopaandeel", "!cookies",
+				"!givecookie", "!eetcookie", "!paycookie", "!steelcookie", "!cookietop");
+		jda.addEventListener(new ListenerAdapter() {
+			@Override
+			public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+				if (BotConfig.getInstance().COOKIECHANNEL_ID != -1L
+						&& BotConfig.getInstance().COOKIECHANNEL_ID != event.getChannel().getIdLong()) {
+					return;
+				}
+				String message = event.getMessage().getContentRaw();
+				String[] messageArguments = message.toLowerCase().split(" ");
+				if (OLD_COMMANDS.contains(messageArguments[0])) {
+					event.getChannel().sendMessageEmbeds(
+							MessageHandler.getHandler().getDefaultEmbed("Tip!")
+									.setDescription("Je moet **/" + messageArguments[0].substring(1) + "**" +
+											" gebruiken om dit commando uit te voeren")
+									.build())
+							.queue();
+				}
+
+			}
+		});
 	}
 
 	public static JDA getBot() {

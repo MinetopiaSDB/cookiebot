@@ -12,7 +12,7 @@ import nl.minetopiasdb.cookiebot.data.HikariSQL;
 public class StockUserData {
 
 	private static StockUserData instance;
-	private HashMap<String, Integer> cache = new HashMap<>();
+	private HashMap<String, Long> cache = new HashMap<>();
 
 	public static StockUserData getInstance() {
 		if (instance == null) {
@@ -27,7 +27,7 @@ public class StockUserData {
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery("SELECT userId, stocksymbol, amount FROM StockData");
 			while (rs.next()) {
-				cache.put(rs.getLong("userId") + "." + rs.getString("stocksymbol"), rs.getInt("amount"));
+				cache.put(rs.getLong("userId") + "." + rs.getString("stocksymbol"), rs.getLong("amount"));
 			}
 			rs.close();
 			statement.close();
@@ -36,14 +36,14 @@ public class StockUserData {
 		}
 	}
 
-	public int getStocks(long user, String symbol) {
+	public long getStocks(long user, String symbol) {
 		if (!cache.containsKey(user + "." + symbol)) {
 			return 0;
 		}
 		return cache.get(user + "." + symbol);
 	}
 
-	public void setStocks(long user, String symbol, int amount) {
+	public void setStocks(long user, String symbol, long amount) {
 		cache.remove(user + "." + symbol);
 		if (amount != 0) {
 			cache.put(user + "." + symbol, amount);
@@ -64,7 +64,7 @@ public class StockUserData {
 			if (rs.next()) {
 				PreparedStatement update = conn
 						.prepareStatement("UPDATE StockData SET amount=? WHERE userId=? AND stocksymbol=?");
-				update.setInt(1, amount);
+				update.setLong(1, amount);
 				update.setLong(2, user);
 				update.setString(3, symbol);
 				update.execute();
@@ -74,7 +74,7 @@ public class StockUserData {
 						.prepareStatement("INSERT INTO StockData (userId, stocksymbol, amount) VALUES (?, ?, ?)");
 				insert.setLong(1, user);
 				insert.setString(2, symbol);
-				insert.setInt(3, amount);
+				insert.setLong(3, amount);
 				insert.execute();
 				insert.close();
 			}

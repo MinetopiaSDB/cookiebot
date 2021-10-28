@@ -10,8 +10,8 @@ import java.net.http.HttpResponse;
 
 public class FinnhubAPI {
 
-	private HttpClient httpClient;
-	private String apiToken;
+	private final HttpClient httpClient;
+	private final String apiToken;
 
 	public FinnhubAPI(String apiToken) {
 		this.apiToken = apiToken;

@@ -1,9 +1,9 @@
 package nl.minetopiasdb.cookiebot.utils.commands;
 
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 public interface BotCommand {
 
-	public void execute(Command cmd, String[] args, Message msg);
+	void execute(Command cmd, SlashCommandEvent event);
 	
 }

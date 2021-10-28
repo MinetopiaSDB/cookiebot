@@ -40,8 +40,8 @@ public class CookieData {
 		}
 	}
 
-	public int getCookies(long userId) {
-		int cookies = 0;
+	public long getCookies(long userId) {
+		long cookies = 0;
 
 		try (Connection conn = HikariSQL.getInstance().getConnection()) {
 			PreparedStatement ps = conn.prepareStatement("SELECT `cookies` FROM `CookieData` WHERE userId=?");
@@ -60,12 +60,13 @@ public class CookieData {
 		return 0;
 	}
 
-	public void setCookies(long userId, int amount) {
+	public void setCookies(long userId, long amount) {
 		addUserDefaults(userId);
 		try (Connection conn = HikariSQL.getInstance().getConnection()) {
 			PreparedStatement ps = conn
-					.prepareStatement("UPDATE `CookieData` SET `cookies`=" + amount + " WHERE `userId`=?");
-			ps.setLong(1, userId);
+					.prepareStatement("UPDATE `CookieData` SET `cookies`=? WHERE `userId`=?");
+			ps.setLong(1, amount);
+			ps.setLong(2, userId);
 			ps.executeUpdate();
 			ps.close();
 		} catch (Exception ex) {
@@ -92,11 +93,11 @@ public class CookieData {
 		return cookieTop;
 	}
 
-	public void addCookies(Long userId, int amount) {
+	public void addCookies(Long userId, long amount) {
 		setCookies(userId, getCookies(userId) + amount);
 	}
 
-	public void removeCookies(Long userId, int amount) {
+	public void removeCookies(Long userId, long amount) {
 		setCookies(userId, getCookies(userId) - amount);
 	}
 }

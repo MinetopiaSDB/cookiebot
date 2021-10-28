@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import nl.minetopiasdb.cookiebot.Main;
 
 public class CommandFactory {
 
 	private static CommandFactory instance = null;
-	private HashMap<Command, BotCommand> commands = new HashMap<Command, BotCommand>();
+	private final HashMap<Command, BotCommand> commands = new HashMap<>();
 
 	public static CommandFactory getInstance() {
 		if (instance == null) {
@@ -19,22 +23,19 @@ public class CommandFactory {
 		return instance;
 	}
 
-	public Command registerCommand(String commandName, BotCommand executor) {
-		if (!commands.keySet().stream().filter(cmd -> cmd.getName().equalsIgnoreCase(commandName))
-				.collect(Collectors.toList()).isEmpty()) {
+	public Command registerCommand(String commandName, String description, BotCommand executor, OptionData... options) {
+		if (commands.keySet().stream().anyMatch(cmd -> cmd.getName().equalsIgnoreCase(commandName))) {
 			return null;
 		}
+		Main.getGuild().upsertCommand(new CommandData(commandName, description).addOptions(options)).queue();
 		Command command = new Command(commandName, new ArrayList<>());
 		commands.put(command, executor);
 		return command;
 	}
 
-	public void execute(String fullProvided, Message msg) {
-		String[] args = Arrays.copyOfRange(fullProvided.split(" "), 1, fullProvided.split(" ").length);
-		String label = fullProvided.split(" ")[0].toLowerCase();
-
+	public void execute(String command, SlashCommandEvent event) {
 		commands.keySet().stream()
-				.filter(cmd -> cmd.getName().equalsIgnoreCase(label) || cmd.getAliases().contains(label))
-				.forEach(cmd -> commands.get(cmd).execute(cmd, args, msg));
+				.filter(cmd -> cmd.getName().equals(command) || cmd.getAliases().contains(command))
+				.forEach(cmd -> commands.get(cmd).execute(cmd, event));
 	}
 }
