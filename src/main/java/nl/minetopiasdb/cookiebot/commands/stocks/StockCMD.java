@@ -32,7 +32,7 @@ public class StockCMD implements BotCommand {
 					+ valueChangeStr + "%)";
 		}
 		builder.setDescription(desc);
-		event.reply("").addEmbeds(builder.build()).queue();
+		event.replyEmbeds(builder.build()).queue();
 	}
 
 }

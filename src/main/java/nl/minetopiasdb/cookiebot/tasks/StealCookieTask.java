@@ -1,11 +1,10 @@
 package nl.minetopiasdb.cookiebot.tasks;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.TimerTask;
+import java.util.*;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import nl.minetopiasdb.cookiebot.Main;
 import nl.minetopiasdb.cookiebot.data.CookieData;
 import nl.minetopiasdb.cookiebot.utils.MessageHandler;
@@ -18,20 +17,21 @@ public class StealCookieTask extends TimerTask {
 	public void run() {
 		for (long userId : new ArrayList<>(currentlyEating.keySet())) {
 			StealData stealUser = currentlyEating.get(userId);
-			Message msg = stealUser.getMessage();
+			InteractionHook hook = stealUser.getInteractionHook();
 			int seconds = stealUser.getSeconds();
 			long targetId = stealUser.getTarget();
+			User user = Main.getBot().retrieveUserById(userId, false).complete();
+			User target = Main.getBot().retrieveUserById(targetId, false).complete();
 
 			if (seconds > 1) {
 				seconds--;
 
-				msg.editMessage(MessageHandler.getHandler()
-						.getStealCookieProgressEmbed(Main.getBot().retrieveUserById(userId, false).complete(),
-								Main.getBot().retrieveUserById(targetId, false).complete(), seconds)
+				hook.editOriginal(target.getAsMention()).setEmbeds(MessageHandler.getHandler()
+						.getStealCookieProgressEmbed(user, target, seconds)
 						.build()).queue();
 
 				currentlyEating.remove(userId);
-				currentlyEating.put(userId, new StealData(msg, seconds, targetId));
+				currentlyEating.put(userId, new StealData(hook, seconds, targetId));
 			} else {
 				String priceMsg = "", priceStatus = "";
 
@@ -49,14 +49,14 @@ public class StealCookieTask extends TimerTask {
 
 					priceStatus = "Mislukt...";
 					priceMsg = "Je bent 3 cookies verloren aan de ander! :grimacing:";
-				} else if (random == 2) {
+				} else {
 					CookieData.getInstance().removeCookies(userId, 2);
 					priceStatus = "Mislukt...";
 					priceMsg = "Je bent betrapt door de politie, je bent 2 cookies verloren.. :police_officer:";
 				}
 
 				currentlyEating.remove(userId);
-				msg.editMessage(MessageHandler.getHandler()
+				hook.editOriginal(target.getAsMention()).setEmbeds(MessageHandler.getHandler()
 						.getStealCookieFinishEmbed(Main.getBot().retrieveUserById(userId, false).complete(),
 								Main.getBot().retrieveUserById(targetId, false).complete(), priceStatus, priceMsg)
 						.build()).queue();
@@ -70,18 +70,18 @@ public class StealCookieTask extends TimerTask {
 
 	public static class StealData {
 
-		private Message message;
-		private int seconds;
-		private long target;
+		private final InteractionHook hook;
+		private final int seconds;
+		private final long target;
 
-		public StealData(Message message, int seconds, long target) {
-			this.message = message;
+		public StealData(InteractionHook hook, int seconds, long target) {
+			this.hook = hook;
 			this.seconds = seconds;
 			this.target = target;
 		}
 
-		public Message getMessage() {
-			return message;
+		public InteractionHook getInteractionHook() {
+			return hook;
 		}
 
 		public int getSeconds() {

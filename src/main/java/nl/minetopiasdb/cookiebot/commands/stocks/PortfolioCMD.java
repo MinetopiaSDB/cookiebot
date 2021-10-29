@@ -29,7 +29,7 @@ public class PortfolioCMD implements BotCommand {
 		
 		EmbedBuilder builder = MessageHandler.getHandler().getDefaultEmbed("Aandelen van " + event.getUser().getName() + " (totale waarde: " + totalValue + " koekjes)");
 		builder.setDescription(desc);
-		event.reply("").addEmbeds(builder.build()).queue();
+		event.replyEmbeds(builder.build()).queue();
 	}
 
 }

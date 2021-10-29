@@ -15,7 +15,7 @@ public class CookiesCMD implements BotCommand {
 		OptionMapping userOption = event.getOption("user");
 		User user = userOption == null ? event.getUser() : userOption.getAsUser();
 
-		event.reply("").addEmbeds(MessageHandler.getHandler().getDefaultEmbed("Cookies")
+		event.replyEmbeds(MessageHandler.getHandler().getDefaultEmbed("Cookies")
 				.setDescription(user.getName() + ": " + CookieData.getInstance().getCookies(user.getIdLong()))
 				.build())
 				.queue();

@@ -120,16 +120,21 @@ public class Main {
 				"Bekijk de hoeveelheid koekjes van jezelf en andere serverleden", new CookiesCMD(),
 				new OptionData(OptionType.USER, "user", "Persoon van wie jij de hoeveelheid koekjes wilt zien"));
 
-		//givecookie
+		CommandFactory.getInstance().registerCommand("givecookie",
+				"Geef iemand vijf koekjes", new GivecookieCMD(),
+				new OptionData(OptionType.USER, "user", "Persoon wie jij vijf koekjes wilt geven", true));
 
 		CommandFactory.getInstance().registerCommand("eetcookie",
 				"Eet een koekje op en maak kans op prijzen!", new EatcookieCMD());
 
-		/*
-		CommandFactory.getInstance().registerCommand("!givecookie", new GivecookieCMD());
-		CommandFactory.getInstance().registerCommand("!paycookie", new PaycookieCMD());
-		CommandFactory.getInstance().registerCommand("!steelcookie", new StealcookieCMD());
-	   */
+		CommandFactory.getInstance().registerCommand("paycookie",
+				"Geef iemand koekjes kado", new PaycookieCMD(),
+				new OptionData(OptionType.USER, "user", "Persoon wie jij koekjes wilt geven", true),
+				new OptionData(OptionType.INTEGER, "hoeveelheid", "De hoeveelheid koekjes die je wilt geven", true));
+
+		CommandFactory.getInstance().registerCommand("steelcookie",
+				"Probeer koekjes van iemand te stelen", new StealcookieCMD(),
+				new OptionData(OptionType.USER, "user", "Persoon van wie jij koekjes wilt stelen", true));
 
 		CommandFactory.getInstance().registerCommand("cookietop",
 				"Kom erachter wie de meeste cookies heeft!",
@@ -149,10 +154,10 @@ public class Main {
 				String[] messageArguments = message.toLowerCase().split(" ");
 				if (OLD_COMMANDS.contains(messageArguments[0])) {
 					event.getChannel().sendMessageEmbeds(
-							MessageHandler.getHandler().getDefaultEmbed("Tip!")
-									.setDescription("Je moet **/" + messageArguments[0].substring(1) + "**" +
-											" gebruiken om dit commando uit te voeren")
-									.build())
+									MessageHandler.getHandler().getDefaultEmbed("Tip!")
+											.setDescription("Je moet **/" + messageArguments[0].substring(1) + "**" +
+													" gebruiken om dit commando uit te voeren")
+											.build())
 							.queue();
 				}
 

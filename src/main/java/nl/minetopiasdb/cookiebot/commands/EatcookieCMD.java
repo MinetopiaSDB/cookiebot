@@ -35,7 +35,7 @@ public class EatcookieCMD implements BotCommand {
 
 		CookieData.getInstance().removeCookies(user.getIdLong(), 1);
 
-		event.reply("").addEmbeds(MessageHandler.getHandler()
+		event.replyEmbeds(MessageHandler.getHandler()
 				.getEatCookieProgressEmbed(
 						Main.getGuild().retrieveMemberById(user.getIdLong(), false).complete().getUser(), 5)
 				.build())

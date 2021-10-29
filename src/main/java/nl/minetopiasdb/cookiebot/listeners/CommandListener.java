@@ -12,6 +12,8 @@ public class CommandListener extends ListenerAdapter {
 	public void onSlashCommand(SlashCommandEvent event) {
 		if (BotConfig.getInstance().COOKIECHANNEL_ID != -1L
 				&& BotConfig.getInstance().COOKIECHANNEL_ID != event.getChannel().getIdLong()) {
+			long channelId = BotConfig.getInstance().COOKIECHANNEL_ID;
+			event.reply("Deze commando's werken alleen in <#" + channelId + ">.").setEphemeral(true).queue();
 			return;
 		}
 		CommandFactory.getInstance().execute(event.getName(), event);
