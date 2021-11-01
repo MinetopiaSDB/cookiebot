@@ -55,8 +55,8 @@ public class Main {
 		}
 
 		try {
-			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES)
-					.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
+			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, GatewayIntent.GUILD_MEMBERS)
+					.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
 					.build();
 		} catch (LoginException e) {
 			e.printStackTrace();
@@ -139,30 +139,6 @@ public class Main {
 		CommandFactory.getInstance().registerCommand("cookietop",
 				"Kom erachter wie de meeste cookies heeft!",
 				new CookietopCMD());
-
-		// Give hints to users that still use the old commands
-		Set<String> OLD_COMMANDS = Set.of("!aandelen", "!portfolio", "!koopaandeel", "!verkoopaandeel", "!cookies",
-				"!givecookie", "!eetcookie", "!paycookie", "!steelcookie", "!cookietop");
-		jda.addEventListener(new ListenerAdapter() {
-			@Override
-			public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-				if (BotConfig.getInstance().COOKIECHANNEL_ID != -1L
-						&& BotConfig.getInstance().COOKIECHANNEL_ID != event.getChannel().getIdLong()) {
-					return;
-				}
-				String message = event.getMessage().getContentRaw();
-				String[] messageArguments = message.toLowerCase().split(" ");
-				if (OLD_COMMANDS.contains(messageArguments[0])) {
-					event.getChannel().sendMessageEmbeds(
-									MessageHandler.getHandler().getDefaultEmbed("Tip!")
-											.setDescription("Je moet **/" + messageArguments[0].substring(1) + "**" +
-													" gebruiken om dit commando uit te voeren")
-											.build())
-							.queue();
-				}
-
-			}
-		});
 	}
 
 	public static JDA getBot() {
