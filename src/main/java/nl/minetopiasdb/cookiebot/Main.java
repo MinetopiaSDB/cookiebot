@@ -1,13 +1,18 @@
 package nl.minetopiasdb.cookiebot;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.security.auth.login.LoginException;
+import javax.swing.text.html.Option;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import nl.minetopiasdb.cookiebot.commands.CookiesCMD;
@@ -24,20 +29,22 @@ import nl.minetopiasdb.cookiebot.cooldowns.EatcookieCooldown;
 import nl.minetopiasdb.cookiebot.cooldowns.GivecookieCooldown;
 import nl.minetopiasdb.cookiebot.cooldowns.StealcookieCooldown;
 import nl.minetopiasdb.cookiebot.data.HikariSQL;
+import nl.minetopiasdb.cookiebot.data.stocks.FinnhubAPI;
 import nl.minetopiasdb.cookiebot.data.stocks.StockUserData;
 import nl.minetopiasdb.cookiebot.listeners.CommandListener;
 import nl.minetopiasdb.cookiebot.tasks.EatCookieTask;
 import nl.minetopiasdb.cookiebot.tasks.StealCookieTask;
 import nl.minetopiasdb.cookiebot.tasks.StockTask;
 import nl.minetopiasdb.cookiebot.utils.BotConfig;
+import nl.minetopiasdb.cookiebot.utils.MessageHandler;
 import nl.minetopiasdb.cookiebot.utils.commands.CommandFactory;
 
 public class Main {
 
+	private static FinnhubAPI finnhubAPI;
 	private static JDA jda;
 	private static EatCookieTask eatCookieTask;
 	private static StealCookieTask stealCookieTask;
-	public static boolean TESTED = true;
 
 	public static void main(String[] args) {
 		BotConfig.getInstance().initialise();
@@ -48,8 +55,8 @@ public class Main {
 		}
 
 		try {
-			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES)
-					.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS)
+			jda = JDABuilder.create(BotConfig.getInstance().BOT_TOKEN, GatewayIntent.GUILD_MEMBERS)
+					.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
 					.build();
 		} catch (LoginException e) {
 			e.printStackTrace();
@@ -69,39 +76,77 @@ public class Main {
 		stealCookieTask = new StealCookieTask();
 
 		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(eatCookieTask, 1000l, 1000l);
-		timer.scheduleAtFixedRate(stealCookieTask, 1000l, 1000l);
+		timer.scheduleAtFixedRate(eatCookieTask, 1000L, 1000L);
+		timer.scheduleAtFixedRate(stealCookieTask, 1000L, 1000L);
 		timer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
 				StealcookieCooldown.getInstance().manageCooldowns();
 				EatcookieCooldown.getInstance().manageCooldowns();
 				GivecookieCooldown.getInstance().manageCooldowns();
 			}
-		}, 60 * 1000l, 60 * 1000l);
+		}, 60 * 1000L, 60 * 1000L);
 
 		BotConfig bc = BotConfig.getInstance();
 		if (bc.STOCKS_ENABLED) {
 			if (bc.FINNHUB_KEY.equals("LEUKEAPIKEYZEG")) {
 				System.out.println("Please request a free Finnhub API key at finnhub.io before enabling stocks!");
 			} else {
-				timer.scheduleAtFixedRate(new StockTask(), 0l, 1000 * 60 * 4);
+				finnhubAPI = new FinnhubAPI(bc.FINNHUB_KEY);
+				timer.scheduleAtFixedRate(new StockTask(), 0L, 1000 * 60 * 4);
 				StockUserData.getInstance().pullFromDatabase();
-				CommandFactory.getInstance().registerCommand("!aandelen", new StockCMD());
-				CommandFactory.getInstance().registerCommand("!portfolio", new PortfolioCMD());
-				CommandFactory.getInstance().registerCommand("!koopaandeel", new PurchaseStockCMD());
-				CommandFactory.getInstance().registerCommand("!verkoopaandeel", new SellStockCMD());
+				CommandFactory.getInstance().registerCommand("aandelen",
+						"Bekijk alle beschikbare aandelen en hun waarde.",
+						new StockCMD());
+				CommandFactory.getInstance().registerCommand("portfolio",
+						"Bekijk welke aandelen jij nu hebt en hoeveel deze waard zijn", new PortfolioCMD());
+
+				// Create OptionData and add every stock
+				OptionData stockOption = new OptionData(OptionType.STRING, "aandeel",
+						"Het aandeel waarop jij deze actie wilt verrichten", true);
+				BotConfig.getInstance().stocks.forEach((key, value) -> stockOption.addChoice(value, key));
+
+				CommandFactory.getInstance().registerCommand("koopaandeel",
+						"Koop aandelen", new PurchaseStockCMD(), stockOption,
+						new OptionData(OptionType.INTEGER, "hoeveelheid",
+								"De hoeveelheid aandelen die je wilt kopen"));
+
+				CommandFactory.getInstance().registerCommand("verkoopaandeel",
+						"Verkoop aandelen", new SellStockCMD(), stockOption,
+						new OptionData(OptionType.INTEGER, "hoeveelheid",
+								"De hoeveelheid aandelen die je wilt verkopen"));
 			}
 		}
-		CommandFactory.getInstance().registerCommand("!cookies", new CookiesCMD());
-		CommandFactory.getInstance().registerCommand("!givecookie", new GivecookieCMD());
-		CommandFactory.getInstance().registerCommand("!eetcookie", new EatcookieCMD());
-		CommandFactory.getInstance().registerCommand("!paycookie", new PaycookieCMD());
-		CommandFactory.getInstance().registerCommand("!steelcookie", new StealcookieCMD());
-		CommandFactory.getInstance().registerCommand("!cookietop", new CookietopCMD());
+		CommandFactory.getInstance().registerCommand("cookies",
+				"Bekijk de hoeveelheid koekjes van jezelf en andere serverleden", new CookiesCMD(),
+				new OptionData(OptionType.USER, "user", "Persoon van wie jij de hoeveelheid koekjes wilt zien"));
+
+		CommandFactory.getInstance().registerCommand("givecookie",
+				"Geef iemand vijf koekjes", new GivecookieCMD(),
+				new OptionData(OptionType.USER, "user", "Persoon wie jij vijf koekjes wilt geven", true));
+
+		CommandFactory.getInstance().registerCommand("eetcookie",
+				"Eet een koekje op en maak kans op prijzen!", new EatcookieCMD());
+
+		CommandFactory.getInstance().registerCommand("paycookie",
+				"Geef iemand koekjes kado", new PaycookieCMD(),
+				new OptionData(OptionType.USER, "user", "Persoon wie jij koekjes wilt geven", true),
+				new OptionData(OptionType.INTEGER, "hoeveelheid", "De hoeveelheid koekjes die je wilt geven", true));
+
+		CommandFactory.getInstance().registerCommand("steelcookie",
+				"Probeer koekjes van iemand te stelen", new StealcookieCMD(),
+				new OptionData(OptionType.USER, "user", "Persoon van wie jij koekjes wilt stelen", true));
+
+		CommandFactory.getInstance().registerCommand("cookietop",
+				"Kom erachter wie de meeste cookies heeft!",
+				new CookietopCMD());
 	}
 
 	public static JDA getBot() {
 		return jda;
+	}
+
+	public static FinnhubAPI getFinnhubAPI() {
+		return finnhubAPI;
 	}
 
 	public static Guild getGuild() {

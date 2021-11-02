@@ -1,9 +1,12 @@
 package nl.minetopiasdb.cookiebot.commands;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import nl.minetopiasdb.cookiebot.Main;
 import nl.minetopiasdb.cookiebot.data.CookieData;
@@ -14,20 +17,20 @@ import nl.minetopiasdb.cookiebot.utils.commands.Command;
 public class CookietopCMD implements BotCommand {
 
 	@Override
-	public void execute(Command cmd, String[] args, Message msg) {
+	public void execute(Command cmd, SlashCommandEvent event) {
+		event.deferReply().queue();
+
 		HashMap<Long, Integer> cookieTop = CookieData.getInstance().getCookieTop();
 
 		EmbedBuilder cookieTopEmbed = MessageHandler.getHandler().getDefaultEmbed("CookieTop");
-		StringBuilder embedDescription = new StringBuilder("");
+		StringBuilder embedDescription = new StringBuilder();
 
-		var wrapper = new Object() {
-			int ordinal = 1;
-		};
+		for (int i = 1; i <= 10; i++) {
+			Map.Entry<Long, Integer> entry = new ArrayList<>(cookieTop.entrySet()).get(i-1);
+			embedDescription.append(i + ". " + getName(entry.getKey()) + ": " + entry.getValue() + "\n");
+		}
 
-		cookieTop.keySet().forEach(userId -> embedDescription
-				.append(wrapper.ordinal++ + ". " + getName(userId) + ": " + cookieTop.get(userId) + "\n"));
-
-		msg.getChannel().sendMessage(cookieTopEmbed.setDescription(embedDescription.toString()).build()).queue();
+		event.getHook().sendMessageEmbeds(cookieTopEmbed.setDescription(embedDescription.toString()).build()).queue();
 	}
 
 	public String getName(long userId) {

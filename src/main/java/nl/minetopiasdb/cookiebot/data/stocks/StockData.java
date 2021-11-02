@@ -6,7 +6,7 @@ public class StockData {
 
 	private static StockData instance;
 
-	private HashMap<String, StockValue> cache = new HashMap<>();
+	private HashMap<String, StockPrice> cache = new HashMap<>();
 
 	public static StockData getInstance() {
 		if (instance == null) {
@@ -20,12 +20,11 @@ public class StockData {
 			cache.get(symbol).setCurrentPrice(price);
 			cache.get(symbol).setOpenPrice(openprice);
 		} else {
-			cache.put(symbol, new StockValue(openprice, price));
+			cache.put(symbol, new StockPrice(openprice, price));
 		}
 	}
 
-	public StockValue getValue(String symbol) {
+	public StockPrice getValue(String symbol) {
 		return cache.get(symbol);
 	}
-
 }
