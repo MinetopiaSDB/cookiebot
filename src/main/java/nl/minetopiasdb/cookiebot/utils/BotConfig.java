@@ -1,6 +1,7 @@
 package nl.minetopiasdb.cookiebot.utils;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 import org.simpleyaml.configuration.file.YamlFile;
@@ -9,6 +10,7 @@ import org.simpleyaml.exceptions.InvalidConfigurationException;
 public class BotConfig {
 
 	private static BotConfig instance;
+	private final static DecimalFormat COOKIE_FORMAT = new DecimalFormat("#,###");
 
 	public HashMap<String, String> stocks = new HashMap<>();
 	public String BOT_TOKEN, MYSQL_HOST, MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD, FINNHUB_KEY;
@@ -78,4 +80,7 @@ public class BotConfig {
 		}
 	}
 
+	public String format(long cookies) {
+		return COOKIE_FORMAT.format(cookies).replace(',', '.');
+	}
 }

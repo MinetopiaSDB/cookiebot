@@ -16,7 +16,7 @@ public class CookiesCMD implements BotCommand {
 		User user = userOption == null ? event.getUser() : userOption.getAsUser();
 
 		event.replyEmbeds(MessageHandler.getHandler().getDefaultEmbed("Cookies")
-				.setDescription(user.getName() + ": " + CookieData.getInstance().getCookies(user.getIdLong()))
+				.setDescription(user.getName() + ": " + CookieData.getInstance().getFormattedCookies(user.getIdLong()))
 				.build())
 				.queue();
 	}

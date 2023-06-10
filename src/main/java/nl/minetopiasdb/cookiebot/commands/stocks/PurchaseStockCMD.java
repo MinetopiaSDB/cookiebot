@@ -37,7 +37,7 @@ public class PurchaseStockCMD implements BotCommand {
 		StockUserData.getInstance().setStocks(event.getUser().getIdLong(), symbol,
 				StockUserData.getInstance().getStocks(event.getUser().getIdLong(), symbol) + amount);
 		event.reply("Jij hebt succesvol **" + amount + "** aandelen in **"
-						+ BotConfig.getInstance().stocks.get(symbol) + "** gekocht voor **" + costs + " koekjes**.")
+						+ BotConfig.getInstance().stocks.get(symbol) + "** gekocht voor **" + BotConfig.getInstance().format(costs) + " koekjes**.")
 				.queue();
 	}
 

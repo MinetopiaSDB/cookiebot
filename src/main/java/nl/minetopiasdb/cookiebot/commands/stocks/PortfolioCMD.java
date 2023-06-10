@@ -22,12 +22,13 @@ public class PortfolioCMD implements BotCommand {
 			long amount = StockUserData.getInstance().getStocks(event.getUser().getIdLong(), symbol);
 			long value = amount * StockData.getInstance().getValue(symbol).getCurrentPrice();
 
-			desc = desc + "\n**" + name + "** (" + symbol + "): " + amount + "x (" + value + " koekjes)";
+			desc = desc + "\n**" + name + "** (" + symbol + "): " + amount + "x (" + BotConfig.getInstance().format(value) + " koekjes)";
 			
 			totalValue = totalValue + value;
 		}
 		
-		EmbedBuilder builder = MessageHandler.getHandler().getDefaultEmbed("Aandelen van " + event.getUser().getName() + " (totale waarde: " + totalValue + " koekjes)");
+		EmbedBuilder builder = MessageHandler.getHandler().getDefaultEmbed("Aandelen van " + event.getUser().getName()
+				+ " (totale waarde: " + BotConfig.getInstance().format(totalValue) + " koekjes)");
 		builder.setDescription(desc);
 		event.replyEmbeds(builder.build()).queue();
 	}

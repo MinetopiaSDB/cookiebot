@@ -28,7 +28,7 @@ public class StockCMD implements BotCommand {
 			DecimalFormat df = new DecimalFormat("0.00");
 			String valueChangeStr = valueChange > 0 ? "+" + df.format(valueChange) : "" + df.format(valueChange);
 
-			desc = desc + "\n**" + name + "** (" + symbol + "): " + value.getCurrentPrice() + " koekjes ("
+			desc = desc + "\n**" + name + "** (" + symbol + "): " + BotConfig.getInstance().format(value.getCurrentPrice()) + " koekjes ("
 					+ valueChangeStr + "%)";
 		}
 		builder.setDescription(desc);

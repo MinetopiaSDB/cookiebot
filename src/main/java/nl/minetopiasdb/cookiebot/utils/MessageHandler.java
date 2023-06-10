@@ -54,6 +54,6 @@ public class MessageHandler {
 	public EmbedBuilder getGiveCookieEmbed(Member giver, Member receiver) {
 		return getDefaultEmbed("GiveCookie").addField("Cookies van", giver.getEffectiveName(), true)
 				.addField("Cookies voor", receiver.getEffectiveName(), true)
-				.addField("Nieuw aantal cookies", "" + CookieData.getInstance().getCookies(receiver.getIdLong()), true);
+				.addField("Nieuw aantal cookies", "" + CookieData.getInstance().getFormattedCookies(receiver.getIdLong()), true);
 	}
 }

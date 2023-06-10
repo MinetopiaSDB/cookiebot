@@ -40,7 +40,7 @@ public class SellStockCMD implements BotCommand {
 		StockUserData.getInstance().setStocks(event.getUser().getIdLong(), symbol,
 				StockUserData.getInstance().getStocks(event.getUser().getIdLong(), symbol) - amount);
 		event.reply("Jij hebt succesvol **" + amount+ "** aandelen in " +
-				"**" + bc.stocks.get(symbol) + "** verkocht voor **" + costs + " koekjes**.")
+				"**" + bc.stocks.get(symbol) + "** verkocht voor **" + BotConfig.getInstance().format(costs) + " koekjes**.")
 				.queue();
 	}
 

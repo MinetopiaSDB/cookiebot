@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import nl.minetopiasdb.cookiebot.Main;
 import nl.minetopiasdb.cookiebot.data.CookieData;
+import nl.minetopiasdb.cookiebot.utils.BotConfig;
 import nl.minetopiasdb.cookiebot.utils.MessageHandler;
 import nl.minetopiasdb.cookiebot.utils.commands.BotCommand;
 import nl.minetopiasdb.cookiebot.utils.commands.Command;
@@ -20,14 +21,14 @@ public class CookietopCMD implements BotCommand {
 	public void execute(Command cmd, SlashCommandEvent event) {
 		event.deferReply().queue();
 
-		HashMap<Long, Integer> cookieTop = CookieData.getInstance().getCookieTop();
+		Map<Long, Integer> cookieTop = CookieData.getInstance().getCookieTop();
 
 		EmbedBuilder cookieTopEmbed = MessageHandler.getHandler().getDefaultEmbed("CookieTop");
 		StringBuilder embedDescription = new StringBuilder();
 
 		for (int i = 1; i <= 10; i++) {
 			Map.Entry<Long, Integer> entry = new ArrayList<>(cookieTop.entrySet()).get(i-1);
-			embedDescription.append(i + ". " + getName(entry.getKey()) + ": " + entry.getValue() + "\n");
+			embedDescription.append(i + ". " + getName(entry.getKey()) + ": " + BotConfig.getInstance().format(entry.getValue()) + "\n");
 		}
 
 		event.getHook().sendMessageEmbeds(cookieTopEmbed.setDescription(embedDescription.toString()).build()).queue();

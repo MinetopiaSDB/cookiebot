@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import nl.minetopiasdb.cookiebot.Main;
 import nl.minetopiasdb.cookiebot.data.CookieData;
+import nl.minetopiasdb.cookiebot.utils.BotConfig;
 import nl.minetopiasdb.cookiebot.utils.MessageHandler;
 import nl.minetopiasdb.cookiebot.utils.commands.BotCommand;
 import nl.minetopiasdb.cookiebot.utils.commands.Command;
@@ -40,8 +41,8 @@ public class PaycookieCMD implements BotCommand {
 						.addField("Cookies van", Main.getGuild().getMember(event.getUser()).getEffectiveName(), true)
 						.addField("Cookies voor", recipient.getEffectiveName(), true)
 						.addField("Nieuwe aantal cookies van " + recipient.getEffectiveName(),
-								CookieData.getInstance().getCookies(recipient.getIdLong()) + " cookies", true)
-						.addField("Hoeveelheid cookies", cookies + " cookies", true).build())
+								CookieData.getInstance().getFormattedCookies(recipient.getIdLong()) + " cookies", true)
+						.addField("Hoeveelheid cookies", BotConfig.getInstance().format(cookies) + " cookies", true).build())
 				.queue();
 	}
 }

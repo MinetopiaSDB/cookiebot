@@ -1,11 +1,15 @@
 package nl.minetopiasdb.cookiebot.data;
 
+import nl.minetopiasdb.cookiebot.utils.BotConfig;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CookieData {
 
@@ -58,6 +62,10 @@ public class CookieData {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+
+	public String getFormattedCookies(long userId) {
+		return BotConfig.getInstance().format(getCookies(userId));
 	}
 
 	public void setCookies(long userId, long amount) {

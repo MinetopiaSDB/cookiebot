@@ -1,5 +1,6 @@
 package nl.minetopiasdb.cookiebot;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
