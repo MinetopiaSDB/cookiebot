@@ -75,7 +75,7 @@ public class BotConfig {
 				stocks.put(stock, file.getString("Aandelen.Stock." + stock));
 			}
 
-		} catch (IOException | InvalidConfigurationException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
