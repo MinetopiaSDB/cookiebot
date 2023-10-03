@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'master'
+      - 'main'
+      - 'feature/**'
 
 jobs:
   build:
@@ -11,9 +13,9 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - uses: actions/setup-java@v2
+    - uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
@@ -23,6 +25,7 @@ jobs:
 
     - run: mkdir -p target
 
-    - uses: actions/upload-artifact@master
+    - uses: actions/upload-artifact@v3
       with:
-        path: target/cookiebot*.jar
+        name: build-artifact
+        path: target/cookiebot-*.jar

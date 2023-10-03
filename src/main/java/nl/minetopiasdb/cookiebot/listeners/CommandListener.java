@@ -10,9 +10,9 @@ public class CommandListener extends ListenerAdapter {
 
 	@Override
 	public void onSlashCommand(SlashCommandEvent event) {
-		if (BotConfig.getInstance().COOKIECHANNEL_ID != -1L
-				&& BotConfig.getInstance().COOKIECHANNEL_ID != event.getChannel().getIdLong()) {
-			long channelId = BotConfig.getInstance().COOKIECHANNEL_ID;
+		if (BotConfig.getInstance().COOKIE_CHANNEL_ID != -1L
+				&& BotConfig.getInstance().COOKIE_CHANNEL_ID != event.getChannel().getIdLong()) {
+			long channelId = BotConfig.getInstance().COOKIE_CHANNEL_ID;
 			event.reply("Deze commando's werken alleen in <#" + channelId + ">.").setEphemeral(true).queue();
 			return;
 		}
