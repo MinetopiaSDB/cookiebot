@@ -27,7 +27,7 @@ public class BotConfig {
 	}
 
 	public void initialise() {
-		Dotenv dotenv = Dotenv.load();
+		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
 		BOT_TOKEN = dotenv.get("BOT_TOKEN");
 
