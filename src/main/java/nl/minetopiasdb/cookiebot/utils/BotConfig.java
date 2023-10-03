@@ -29,7 +29,7 @@ public class BotConfig {
 	public void initialise() {
 		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
-		BOT_TOKEN = dotenv.get("BOT_TOKEN");
+		BOT_TOKEN = dotenv.get("DISCORD_BOT_TOKEN");
 
 		MYSQL_HOST = dotenv.get("DB_HOST");
 		MYSQL_PORT = Integer.parseInt(dotenv.get("DB_PORT"));
