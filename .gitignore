@@ -34,4 +34,4 @@ out/
 # MinetopiaSDB
 logs/
 modules/
-config.yml
+.env

@@ -1,22 +1,23 @@
 package nl.minetopiasdb.cookiebot.utils;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.simpleyaml.configuration.file.YamlFile;
-import org.simpleyaml.exceptions.InvalidConfigurationException;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class BotConfig {
 
 	private static BotConfig instance;
 	private final static DecimalFormat COOKIE_FORMAT = new DecimalFormat("#,###");
 
-	public HashMap<String, String> stocks = new HashMap<>();
+	public Map<String, String> stocks = new HashMap<>();
 	public String BOT_TOKEN, MYSQL_HOST, MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD, FINNHUB_KEY;
 	public int MYSQL_PORT;
-	public Long DONATOR_ROLE_ID, GUILD_ID, COOKIECHANNEL_ID;
-	public boolean STOCKS_ENABLED;
+	public Long DONATOR_ROLE_ID, GUILD_ID, COOKIE_CHANNEL_ID;
 
 	public static BotConfig getInstance() {
 		if (instance == null) {
@@ -26,58 +27,25 @@ public class BotConfig {
 	}
 
 	public void initialise() {
-		try {
-			YamlFile file = new YamlFile("config.yml");
-			if (file.exists()) {
-				file.load();
-			}
+		Dotenv dotenv = Dotenv.load();
 
-			file.addDefault("Bot.Token", "TYP-HIER-JOUW-BOTTOKEN");
-			file.addDefault("Bot.DonatorRoleID", 381114554010173440l);
-			file.addDefault("Bot.GuildID", 276296022106308609l);
-			file.addDefault("Bot.CookieChannelId", -1l);
+		BOT_TOKEN = dotenv.get("BOT_TOKEN");
 
-			file.addDefault("MySQL.Host", "127.0.0.1");
-			file.addDefault("MySQL.Port", 3306);
-			file.addDefault("MySQL.Database", "cookiebot");
-			file.addDefault("MySQL.Username", "cookiebot");
-			file.addDefault("MySQL.Password", "ikwilkoekjes");
-			
-			if (file.getConfigurationSection("Aandelen") == null) {
-				file.addDefault("Aandelen.Enabled", false);
-				file.addDefault("Aandelen.FinnhubAPIKey", "LEUKEAPIKEYZEG");
-				
-				file.addDefault("Aandelen.Stock.AAPL", "Apple Inc.");
-				file.addDefault("Aandelen.Stock.AMZN", "Amazon.com");
-				file.addDefault("Aandelen.Stock.AMD", "Advanced Micro Devices");
-				file.addDefault("Aandelen.Stock.TSLA", "Tesla, Inc.");
-				file.addDefault("Aandelen.Stock.MSFT", "Microsoft");
-				file.addDefault("Aandelen.Stock.NVDA", "NVIDIA");
-			}
-			file.options().copyDefaults(true);
-			file.save();
+		MYSQL_HOST = dotenv.get("DB_HOST");
+		MYSQL_PORT = Integer.parseInt(dotenv.get("DB_PORT"));
+		MYSQL_DATABASE = dotenv.get("DB_DATABASE");
+		MYSQL_USERNAME = dotenv.get("DB_USERNAME");
+		MYSQL_PASSWORD = dotenv.get("DB_PASSWORD");
 
-			BOT_TOKEN = file.getString("Bot.Token");
-			MYSQL_HOST = file.getString("MySQL.Host");
-			MYSQL_DATABASE = file.getString("MySQL.Database");
-			MYSQL_USERNAME = file.getString("MySQL.Username");
-			MYSQL_PASSWORD = file.getString("MySQL.Password");
+		GUILD_ID = Long.parseLong(dotenv.get("GUILD_ID"));
+		DONATOR_ROLE_ID = Long.parseLong(dotenv.get("DONATOR_ROLE_ID"));
+		COOKIE_CHANNEL_ID = Long.parseLong(dotenv.get("COOKIE_CHANNEL_ID"));
+		FINNHUB_KEY = dotenv.get("FINNHUB_API_KEY");
 
-			MYSQL_PORT = file.getInt("MySQL.Port");
-
-			GUILD_ID = file.getLong("Bot.GuildID");
-			DONATOR_ROLE_ID = file.getLong("Bot.DonatorRoleID");
-			COOKIECHANNEL_ID = file.getLong("Bot.CookieChannelId");
-			STOCKS_ENABLED = file.getBoolean("Aandelen.Enabled");
-			FINNHUB_KEY = file.getString("Aandelen.FinnhubAPIKey");
-			
-			for (String stock: file.getConfigurationSection("Aandelen.Stock").getKeys(false)) {
-				stocks.put(stock, file.getString("Aandelen.Stock." + stock));
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		stocks = Arrays.stream(dotenv.get("ENABLED_STOCKS").split("(?<=[^\\\\]),")).map(stock_pair -> {
+			String[] stock = stock_pair.split("(?<=[^\\\\]):");
+			return new AbstractMap.SimpleEntry<>(stock[0], stock[1]);
+		}).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 	}
 
 	public String format(long cookies) {
