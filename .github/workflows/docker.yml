@@ -15,19 +15,19 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
-    - uses: actions/setup-java@v3
+    - uses: actions/setup-java@v6
       with:
         distribution: 'temurin'
-        java-version: '17'
+        java-version: '25'
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
     - run: mkdir -p target
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v7
       with:
         name: build-artifact
         path: target/cookiebot-*.jar
@@ -41,13 +41,13 @@ jobs:
 
    steps:
      - name: Checkout repository
-       uses: actions/checkout@v3
+       uses: actions/checkout@v7
 
      - name: Setup Docker buildx
-       uses: docker/setup-buildx-action@v2.10.0
+       uses: docker/setup-buildx-action@v4
 
      - name: Log into registry ${{ env.REGISTRY }}
-       uses: docker/login-action@v2
+       uses: docker/login-action@v4
        with:
          registry: ${{ env.REGISTRY }}
          username: ${{ github.actor }}
@@ -55,20 +55,20 @@ jobs:
 
      - name: Extract Docker metadata
        id: meta
-       uses: docker/metadata-action@v4.6.0
+       uses: docker/metadata-action@v6
        with:
          github-token: ${{ secrets.GITHUB_TOKEN }}
          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
      - name: Download build artifact
-       uses: actions/download-artifact@v3
+       uses: actions/download-artifact@v8
        with:
          name: build-artifact
          path: target/
 
      - name: Build and push Docker image
        id: build-and-push
-       uses: docker/build-push-action@v4.1.1
+       uses: docker/build-push-action@v7
        with:
          context: .
          platforms: linux/amd64
